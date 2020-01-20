@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -24,8 +22,8 @@ model.add(Dense(16, activation='relu'))
 model.add(Dropout(0.25))
 model.add(Dense(1, activation='sigmoid'))
 
-#es_callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+#es_callback = tf.keras.callbacks.EarlyStopping(monitor='valloss', patience=3)
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics = ['accuracy'])
 
-model.fit(data_train, epochs=10)
+model.fit(data_train, epochs=150)
