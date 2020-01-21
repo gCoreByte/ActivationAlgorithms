@@ -18,7 +18,7 @@ y = df.iloc[:, 1].values
 labelencoder_X_1 = LabelEncoder()
 y = labelencoder_X_1.fit_transform(y)
 
-# eraldame  10% andmetest testimiseks
+# eraldame 10% andmetest testimiseks
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)
 
 # ühtlustame andmeid, et oleks paremad tulemused
@@ -30,9 +30,11 @@ X_test = sc.transform(X_test)
 # loome mudeli
 model = Sequential()
 model.add(Dense(256, input_dim=30))
+model.add(Dropout(0.2))
 model.add(Dense(128, activation='sigmoid'))
+model.add(Dropout(0.5))
 model.add(Dense(64, activation='sigmoid'))
-model.add(Dropout(0.1))
+model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 
 # kui test andmete täpsus väheneb, lõpetame treenimise varem (overfitting)

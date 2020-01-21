@@ -28,9 +28,11 @@ X_test = sc.transform(X_test)
 
 model = Sequential()
 model.add(Dense(256, input_dim=30))
+model.add(Dropout(0.2))
 model.add(Dense(128, activation='sigmoid'))
+model.add(Dropout(0.5))
 model.add(Dense(64, activation='sigmoid'))
-model.add(Dropout(0.25))
+model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 
 es_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
