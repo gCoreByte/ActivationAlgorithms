@@ -2,6 +2,8 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 
+import matplotlib.pyplot as plt
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 
@@ -9,7 +11,6 @@ from tensorflow.keras.layers import Dense, Dropout
 df = pd.read_csv("../../../Datasets/breast-cancer-wisconsin/data.csv")
 df = df.iloc[:,:-1]
 print(df.head())
-#df.drop('id')
 X = df.iloc[:, 2:].values
 y = df.iloc[:, 1].values
 
@@ -39,9 +40,15 @@ es_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[es_callback])
+history = model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[es_callback])
 
 loss, accuracy = model.evaluate(X_test, y_test)
 
 print("Loss: ", loss)
 print("Accuracy: ", accuracy)
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.savefig("sigmoid.png")
+plt.show()

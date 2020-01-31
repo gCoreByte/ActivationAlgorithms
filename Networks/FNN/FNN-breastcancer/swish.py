@@ -3,15 +3,14 @@ import tensorflow as tf
 import numpy as np
 
 import matplotlib.pyplot as plt
-
+from utils.swish import swish
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Dense, Dropout, Activation
+from tensorflow.keras.utils import get_custom_objects
 
 
 df = pd.read_csv("../../../Datasets/breast-cancer-wisconsin/data.csv")
 df = df.iloc[:,:-1]
-print(df.head())
-#df.drop('id')
 X = df.iloc[:, 2:].values
 y = df.iloc[:, 1].values
 
@@ -28,12 +27,16 @@ sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
+get_custom_objects().update({'swish': Activation(swish)})
+
 model = Sequential()
 model.add(Dense(256, input_dim=30))
-model.add(Dense(128, activation='softmax'))
-model.add(Dense(64, activation='softmax'))
-model.add(Dropout(0.25))
-model.add(Dense(1, activation='softmax'))
+model.add(Dropout(0.2))
+model.add(Dense(128, activation='swish'))
+model.add(Dropout(0.5))
+model.add(Dense(64, activation='swish'))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='swish'))
 
 es_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 
@@ -49,5 +52,5 @@ print("Accuracy: ", accuracy)
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
 plt.legend(['Train', 'Test'], loc='upper left')
-plt.savefig("softmax.png")
+plt.savefig("swish.png")
 plt.show()

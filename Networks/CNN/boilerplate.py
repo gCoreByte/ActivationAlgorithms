@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten
 
 # loeme sisse andmed
 df = pd.read_csv("")
@@ -29,7 +29,13 @@ X_test = sc.transform(X_test)
 
 # loome mudeli
 model = Sequential()
-model.add(Dense(256, input_dim=30))
+
+model.add(Conv2D(32, (7, 7), activation='sigmoid', input_shape=(64, 64, 3)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(64, (3, 3), activation='sigmoid'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Flatten())
+model.add(Dense(256, activation='sigmoid'))
 model.add(Dropout(0.2))
 model.add(Dense(128, activation='sigmoid'))
 model.add(Dropout(0.5))
