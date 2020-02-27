@@ -50,12 +50,21 @@ plt.plot(X,Y)
 plt.savefig("swish_graph.png")
 #--------------------------------#
 plt.clf()
-X = np.linspace(-5,5,50)
+X = np.linspace(-10,10,50)
 Y = [elu(x) for x in X]
 plt.xlabel("$x$")
 plt.ylabel("$f(x)$")
-plt.yticks(np.arange(-1, 6, 1))
 plt.title("ELU funktsioon")
 plt.grid(True)
 plt.plot(X,Y)
 plt.savefig("elu_graph.png")
+#--------------------------------#
+plt.clf()
+X = np.linspace(-10,10,50)
+Y = [np.tanh(x) for x in X]
+plt.xlabel("$x$")
+plt.ylabel("$f(x)$")
+plt.title("tanh funktsioon")
+plt.grid(True)
+plt.plot(X,Y)
+plt.savefig("tanh_graph.png")
