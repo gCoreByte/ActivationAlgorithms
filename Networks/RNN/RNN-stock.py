@@ -69,9 +69,9 @@ for i in range(run_amount):
     model.add(Dropout(0.1))
     model.add(Dense(1, activation=run_type))
 
-    model.compile(optimizer='adam', loss='binary_crossentropy')
+    model.compile(optimizer='adam', loss='mae')
 
-    history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=1)
+    history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=32)
 
     plt.xlim(0, 25)
     plt.ylim(-0.06, 0.12)
@@ -79,6 +79,7 @@ for i in range(run_amount):
     plt.plot(model.predict(LSTM_test_inputs), label = "ennustatud")
     plt.legend()
     plt.savefig("./"+run_type+"/"+str(i)+".png")
+
 #MAE = mean_absolute_error(LSTM_test_outputs, nn_model.predict(LSTM_test_inputs))
 
 # loss, accuracy = model.evaluate(lstm_test_input, lstm_test_output)
