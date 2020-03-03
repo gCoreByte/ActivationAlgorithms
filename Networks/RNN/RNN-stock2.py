@@ -12,7 +12,7 @@ from tensorflow.keras.utils import get_custom_objects
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 import configparser
 
@@ -28,10 +28,10 @@ data = pd.read_csv("../../Datasets/stock-data" + stock)
 data = data.drop(['Date', 'OpenInt'], 1)
 
 trainAmount = round(len(data.index)/100*90)
-train_data = data[:trainAmount].iloc[:,2:3].values
-test_data = data[trainAmount:].iloc[:,2:3].values
+train_data = data[:trainAmount].iloc[:,1:2].values
+test_data = data[trainAmount:].iloc[:,1:2].values
 
-sc = StandardScaler()
+sc = MinMaxScaler(feature_range=(0,1))
 scaled_train_data = sc.fit_transform(train_data)
 
 X_train = []
@@ -43,9 +43,12 @@ for i in range(50, len(train_data)):
 X_train, y_train = np.array(X_train), np.array(y_train)
 X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
+
+test_data = data[len(data)-len(test_data)-50:].values
 X_test = []
 test_data = test_data.reshape(-1, 1)
-for i in range(100, len(test_data)):
+test_data = sc.transform(test_data)
+for i in range(50, len(test_data)):
     X_test.append(test_data[i-50:i, 0])
 X_test = np.array(X_test)
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
@@ -66,16 +69,18 @@ for i in range(run_amount):
 
     model.compile(optimizer='adam', loss='mae')
 
-    history = model.fit(X_train, y_train, epochs=25, batch_size=32)
-    print(test_data)
-    print(model.predict(X_test))
-    print(sc.inverse_transform(model.predict(X_test)))
+    history = model.fit(X_train, y_train, epochs=1, batch_size=32)
+    prediction = model.predict(X_test)
+    prediction = np.reshape(prediction, (prediction.shape[0], prediction.shape[1]))
+    prediction = sc.inverse_transform(prediction)
+    print(prediction)
+    #prediction = sc.inverse_transform(np.reshape(prediction, (prediction[0], prediction[1])))
     #plt.xlim(0, 25)
     #plt.ylim(-0.06, 0.12)
-    # plt.plot(test_data, label = "reaalne")
-    # plt.plot(sc.inverse_transform(model.predict(X_test)), label = "ennustatud")
-    # plt.legend()
-    # plt.savefig("./"+run_type+"/"+str(i)+".png")
+    plt.plot(test_data, label = "reaalne")
+    plt.plot(prediction, label = "ennustatud")
+    plt.legend()
+    plt.savefig("./"+run_type+"/"+str(i)+".png")
 
 #MAE = mean_absolute_error(LSTM_test_outputs, nn_model.predict(LSTM_test_inputs))
 

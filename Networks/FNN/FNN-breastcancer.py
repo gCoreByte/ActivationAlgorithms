@@ -79,10 +79,11 @@ for i in range(run_amount):
     plt.savefig("./"+run_type+"/"+str(i)+".png")
 
 plt.clf()
-plt.ylim(0.5, 1)
+plt.ylim(0.5, 1.1)
 X = [x for x in range(len(acc_all))]
 plt.plot(X, acc_all)
+plt.axhline(1, color='red')
 plt.legend(['Võrkude täpsus'])
 plt.text(1, 0.55, "Keskmine täpsus:" + str(round(sum(acc_all)/len(acc_all), 3)), fontsize=11)
 plt.text(1, 0.6, "Keskmine treeningupikkus:" + str(round(len_all/len(acc_all), 3)), fontsize=11)
-plt.savefig("./"+run_type+"/"+"avg_acc.png")
+plt.savefig(run_type+"_avg_acc.png")

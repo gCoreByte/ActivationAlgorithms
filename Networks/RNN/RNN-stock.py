@@ -3,6 +3,8 @@ import tensorflow as tf
 import numpy as np
 
 import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error
+
 from utils.swish import swish
 
 
@@ -62,21 +64,29 @@ LSTM_test_outputs = (test_set['Close'][window_len:].values / test_set['Close'][:
 LSTM_test_inputs = [np.array(LSTM_test_inputs) for LSTM_test_inputs in LSTM_test_inputs]
 LSTM_test_inputs = np.array(LSTM_test_inputs)
 
-
+loss = []
+len_all = 0
 for i in range(run_amount):
     model = Sequential()
     model.add(LSTM(32, input_shape=(10, 5)))
     model.add(Dropout(0.1))
+    model.add(Dense(16, activation=run_type))
     model.add(Dense(1, activation=run_type))
 
     model.compile(optimizer='adam', loss='mae')
 
     history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=32)
 
+    len_all += len(history.history['loss'])
+    loss.append(mean_absolute_error(LSTM_test_outputs, model.predict(LSTM_test_inputs)))
+
+    plt.clf()
     plt.xlim(0, 25)
     plt.ylim(-0.06, 0.12)
-    plt.plot(LSTM_test_outputs, label = "reaalne")
-    plt.plot(model.predict(LSTM_test_inputs), label = "ennustatud")
+    plt.title(run_type.capitalize() + " aktivaatoralgoritm")
+    plt.text(0.5, -0.05, "Keskmine treeningupikkus: " + str(round(len_all/run_amount, 3)), fontsize=11)
+    plt.plot(LSTM_test_outputs, label = "Reaalne väärtus")
+    plt.plot(model.predict(LSTM_test_inputs), label = "Ennustatud väärtus")
     plt.legend()
     plt.savefig("./"+run_type+"/"+str(i)+".png")
 
@@ -86,10 +96,11 @@ for i in range(run_amount):
 #
 # print("Loss: ", loss)
 # print("Accuracy: ", accuracy)
-#
-# plt.plot(history.history['accuracy'])
+plt.ylim(0, 0.2)
+X = [x for x in range(len(loss))]
+plt.plot(X, loss)
 # plt.plot(history.history['val_accuracy'])
-# plt.title(run_type.capitalize() + " aktivaatoralgoritm")
-# plt.legend(['Treening', 'Test'], loc='upper left')
-# plt.savefig(run_type+".png")
+plt.title(run_type.capitalize() + " aktivaatoralgoritm")
+plt.legend(['Keskmine absoluutne viga'], loc='upper left')
+plt.savefig(run_type+".png")
 # plt.show()
