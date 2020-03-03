@@ -1,3 +1,5 @@
+import gc
+
 import pandas as pd
 import tensorflow as tf
 import numpy as np
@@ -6,7 +8,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
 from utils.swish import swish
-
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, LSTM
@@ -81,26 +82,38 @@ for i in range(run_amount):
     loss.append(mean_absolute_error(LSTM_test_outputs, model.predict(LSTM_test_inputs)))
 
     plt.clf()
-    plt.xlim(0, 25)
     plt.ylim(-0.06, 0.12)
     plt.title(run_type.capitalize() + " aktivaatoralgoritm")
-    plt.text(0.5, -0.05, "Keskmine treeningupikkus: " + str(round(len_all/run_amount, 3)), fontsize=11)
+    #plt.text(0.5, -0.05, "Keskmine treeningupikkus: " + str(round(len_all/run_amount, 3)), fontsize=11)
     plt.plot(LSTM_test_outputs, label = "Reaalne väärtus")
     plt.plot(model.predict(LSTM_test_inputs), label = "Ennustatud väärtus")
     plt.legend()
     plt.savefig("./"+run_type+"/"+str(i)+".png")
 
+
 #MAE = mean_absolute_error(LSTM_test_outputs, nn_model.predict(LSTM_test_inputs))
 
-# loss, accuracy = model.evaluate(lstm_test_input, lstm_test_output)
-#
-# print("Loss: ", loss)
-# print("Accuracy: ", accuracy)
-plt.ylim(0, 0.2)
+# # loss, accuracy = model.evaluate(lstm_test_input, lstm_test_output)
+# #
+# # print("Loss: ", loss)
+# # print("Accuracy: ", accuracy)
+# plt.ylim(0, 0.2)
+# X = [x for x in range(len(loss))]
+# plt.plot(X, loss)
+# # plt.plot(history.history['val_accuracy'])
+# plt.title(run_type.capitalize() + " aktivaatoralgoritm")
+# plt.legend(['Keskmine absoluutne viga'], loc='upper left')
+# plt.savefig(run_type+".png")
+# # plt.show()
+
+plt.clf()
+plt.ylim(0, 0.05)
 X = [x for x in range(len(loss))]
 plt.plot(X, loss)
-# plt.plot(history.history['val_accuracy'])
+plt.axhline(1, color='red')
+plt.legend(['Võrkude keskmine absoluutne viga'])
 plt.title(run_type.capitalize() + " aktivaatoralgoritm")
 plt.legend(['Keskmine absoluutne viga'], loc='upper left')
-plt.savefig(run_type+".png")
-# plt.show()
+plt.text(1, 0.55, "Keskmise absoluutse vea keskmine:" + str(round(sum(loss)/len(loss), 3)), fontsize=11)
+plt.text(1, 0.6, "Keskmine treeningupikkus:" + str(round(len_all/len(loss), 3)), fontsize=11)
+plt.savefig(run_type+"_avg_acc.png")
