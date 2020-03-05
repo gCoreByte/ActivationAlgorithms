@@ -75,7 +75,8 @@ for i in range(run_amount):
 
     model.compile(optimizer='adam', loss='mae')
 
-    history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=32)
+    print("NETWORK NR: " + str(i))
+    history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=32, verbose=2)
 
     loss.append(mean_absolute_error(LSTM_test_outputs, model.predict(LSTM_test_inputs)))
 
