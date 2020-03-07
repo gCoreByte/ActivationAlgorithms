@@ -54,7 +54,7 @@ for i in range(run_amount):
     model.add(Dense(128, activation=run_type))
     model.add(Dense(64, activation=run_type))
     model.add(Dropout(0.25))
-    model.add(Dense(1, activation=run_type))
+    model.add(Dense(1, activation='sigmoid'))
 
     es_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 
