@@ -1,3 +1,4 @@
+import csv
 import gc
 
 import pandas as pd
@@ -65,6 +66,9 @@ LSTM_test_outputs = (test_set['Close'][window_len:].values / test_set['Close'][:
 LSTM_test_inputs = [np.array(LSTM_test_inputs) for LSTM_test_inputs in LSTM_test_inputs]
 LSTM_test_inputs = np.array(LSTM_test_inputs)
 
+file = open(run_type + ".csv", "w")
+file_writer = csv.writer(file)
+
 loss = []
 for i in range(run_amount):
     model = Sequential()
@@ -79,22 +83,13 @@ for i in range(run_amount):
     history = model.fit(LSTM_training_inputs, LSTM_training_outputs, epochs=25, batch_size=32, verbose=2)
 
     loss.append(mean_absolute_error(LSTM_test_outputs, model.predict(LSTM_test_inputs)))
+    predicted = model.predict(LSTM_test_inputs)
 
-    plt.clf()
-    plt.ylim(-0.06, 0.12)
-    plt.title(run_type.capitalize() + " aktivaatoralgoritm")
-    plt.plot(LSTM_test_outputs, label = "Reaalne väärtus")
-    plt.plot(model.predict(LSTM_test_inputs), label = "Ennustatud väärtus")
-    plt.legend()
-    plt.savefig("./"+run_type+"/"+str(i)+".png")
+    file_writer.writerow([LSTM_test_outputs, predicted])
 
-plt.clf()
-plt.ylim(0, 0.05)
-X = [x for x in range(len(loss))]
-plt.plot(X, loss)
-plt.axhline(1, color='red')
-plt.legend(['Võrkude keskmine absoluutne viga'])
-plt.title(run_type.capitalize() + " aktivaatoralgoritm")
-plt.legend(['Keskmine absoluutne viga'], loc='upper left')
-plt.text(0, 0.04, "Keskmise absoluutse vea keskmine: " + str(round(sum(loss)/len(loss), 3)), fontsize=11)
-plt.savefig(run_type+"_avg_acc.png")
+
+file.close()
+file = open(run_type + "_final.csv", "w")
+file_writer = csv.writer(file)
+file_writer.writerow([loss])
+file.close()

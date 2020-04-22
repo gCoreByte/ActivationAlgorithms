@@ -1,5 +1,7 @@
 from math import trunc
 
+import csv
+
 import pandas as pd
 import tensorflow as tf
 
@@ -28,6 +30,10 @@ get_custom_objects().update({'swish': Activation(swish)})
 # treenime x võrku, igaühe kohta teeme joonise
 acc_all = []
 len_all = 0
+
+file = open(run_type + ".csv", "w")
+file_writer = csv.writer(file)
+
 for i in range(run_amount):
     # andmete sisselugemine
     df = pd.read_csv("../../Datasets/breast-cancer-wisconsin/data.csv")
@@ -69,21 +75,12 @@ for i in range(run_amount):
     print("Loss: ", loss)
     print("Accuracy: ", accuracy)
 
-    plt.clf()
-    plt.ylim(0.8, 1.0)
-    plt.xlim(0, 25)
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title(run_type.capitalize() + " aktivaatoralgoritm")
-    plt.legend(['Treening täpsus', 'Testimise täpsus'], loc='upper right')
-    plt.savefig("./"+run_type+"/"+str(i)+".png")
 
-plt.clf()
-plt.ylim(0.5, 1.1)
-X = [x for x in range(len(acc_all))]
-plt.plot(X, acc_all)
-plt.axhline(1, color='red')
-plt.legend(['Võrkude täpsus'])
-plt.text(1, 0.55, "Keskmine täpsus:" + str(round(sum(acc_all)/len(acc_all), 3)), fontsize=11)
-plt.text(1, 0.6, "Keskmine treeningupikkus:" + str(round(len_all/len(acc_all), 3)), fontsize=11)
-plt.savefig(run_type+"_avg_acc.png")
+    file_writer.writerow([accuracy, history.history['accuracy'], history.history['val_accuracy']])
+
+
+file.close()
+file = open(run_type + "_final.csv", "w")
+file_writer = csv.writer(file)
+file_writer.writerow([acc_all, len_all])
+file.close()
